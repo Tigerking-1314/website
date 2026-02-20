@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tiger Liu</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --accent: #0f766e;
+            --accent-hover: #0d9488;
+            --accent-soft: rgba(15, 118, 110, 0.1);
+            --text: #0f172a;
+            --text-muted: #64748b;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --border: #e2e8f0;
+        }
+
+        body {
+            font-family: 'DM Sans', -apple-system, sans-serif;
+            font-size: 16px;
+            line-height: 1.65;
+            color: var(--text);
+            background: var(--bg);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 680px;
+            margin: 0 auto;
+            padding: 100px 28px 120px;
+        }
+
+        .hero {
+            text-align: center;
+            padding-bottom: 64px;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--accent);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: clamp(2.25rem, 5vw, 3rem);
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            margin-bottom: 12px;
+            color: var(--text);
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 1.05rem;
+            margin-bottom: 36px;
+            font-weight: 500;
+        }
+
+        .links {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .links a {
+            color: var(--text);
+            text-decoration: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: all 0.25s ease;
+        }
+
+        .links a:first-child {
+            background: var(--accent);
+            color: #fff;
+            box-shadow: 0 4px 14px rgba(15, 118, 110, 0.35);
+        }
+
+        .links a:first-child:hover {
+            background: var(--accent-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(15, 118, 110, 0.4);
+        }
+
+        .links a:not(:first-child) {
+            background: var(--card);
+            border: 1.5px solid var(--border);
+        }
+
+        .links a:not(:first-child):hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: var(--accent-soft);
+        }
+
+        section {
+            padding: 32px 32px;
+            background: var(--card);
+            border-radius: 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+            border: 1px solid rgba(0,0,0,0.04);
+        }
+
+        h2 {
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--accent);
+            margin-bottom: 24px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        p {
+            color: var(--text-muted);
+            font-size: 0.98rem;
+        }
+
+        .item {
+            margin-bottom: 28px;
+        }
+
+        .item:last-child {
+            margin-bottom: 0;
+        }
+
+        .item-title {
+            font-weight: 600;
+            font-size: 1.05rem;
+            color: var(--text);
+            margin-bottom: 4px;
+        }
+
+        .item-meta {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .skills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .skill {
+            font-size: 0.88rem;
+            color: var(--text-muted);
+            padding: 8px 16px;
+            background: var(--accent-soft);
+            border-radius: 8px;
+            font-weight: 500;
+            border: 1px solid rgba(15, 118, 110, 0.15);
+        }
+
+        .project-link {
+            color: inherit;
+            text-decoration: none;
+            display: block;
+            margin-bottom: 16px;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            transition: all 0.25s ease;
+        }
+
+        .project-link:last-of-type {
+            margin-bottom: 0;
+        }
+
+        .project-link:hover {
+            background: var(--accent-soft);
+            border-color: rgba(15, 118, 110, 0.25);
+            transform: translateX(4px);
+        }
+
+        .project-link:hover .item-title {
+            color: var(--accent);
+        }
+
+        .contact {
+            text-align: center;
+        }
+
+        .contact a {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .contact a:hover {
+            color: var(--accent);
+        }
+
+        .contact-links {
+            color: var(--text-muted);
+        }
+
+        .contact-links a {
+            color: var(--accent);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 48px;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="hero">
+            <div class="hero-badge">MCIT @ UPenn</div>
+            <h1>Tiger Liu</h1>
+            <p class="subtitle">Software Developer</p>
+            <div class="links">
+                <a href="Resume-Tiger-Liu.pdf" target="_blank">Resume</a>
+                <a href="mailto:tigerliu3@163.com">Email</a>
+                <a href="tel:206-423-1910">Phone</a>
+                <a href="https://linkedin.com/in/tiger-liu-b03478254" target="_blank" rel="noopener">LinkedIn</a>
+            </div>
+        </header>
+
+        <section>
+            <h2>About</h2>
+            <p>MCIT @ UPenn · Former UW · Business Analyst at NcCountry & Beats by Dre · Full-stack developer</p>
+        </section>
+
+        <section>
+            <h2>Education</h2>
+            <div class="item">
+                <div class="item-title">University of Pennsylvania</div>
+                <div class="item-meta">MCIT · 2025 – 2027 · GPA 3.5</div>
+            </div>
+            <div class="item">
+                <div class="item-title">University of Washington</div>
+                <div class="item-meta">BA Communication, Business Minor · 2022 – 2025 · GPA 3.8</div>
+            </div>
+        </section>
+
+        <section>
+            <h2>Experience</h2>
+            <div class="item">
+                <div class="item-title">NcCountry</div>
+                <div class="item-meta">Business Analyst Intern · 2024 · Java, SQL, data pipeline</div>
+            </div>
+            <div class="item">
+                <div class="item-title">Beats by Dre</div>
+                <div class="item-meta">Business Analyst Intern · 2024 · REST APIs</div>
+            </div>
+            <div class="item">
+                <div class="item-title">SkyFood · Appointment System</div>
+                <div class="item-meta">Full-stack · 2025 · Java, Node.js, React</div>
+            </div>
+        </section>
+
+        <section>
+            <h2>Projects</h2>
+            <a href="../Hack/Gravity/best%20game.html" class="project-link" target="_blank">
+                <div class="item-title">Gravity Party</div>
+                <div class="item-meta">Canvas physics game</div>
+            </a>
+            <a href="../Hack/Space Gravity/game-level.html" class="project-link" target="_blank">
+                <div class="item-title">Gravity Party Level Mode</div>
+                <div class="item-meta">Level-based platformer</div>
+            </a>
+            <div class="item" style="margin-top: 16px;">
+                <div class="item-title">Road Trip · Snowdrive</div>
+                <div class="item-meta">Driving simulation games</div>
+            </div>
+        </section>
+
+        <section>
+            <h2>Skills</h2>
+            <div class="skills">
+                <span class="skill">Java</span>
+                <span class="skill">Python</span>
+                <span class="skill">TypeScript</span>
+                <span class="skill">JavaScript</span>
+                <span class="skill">C / C++</span>
+                <span class="skill">SQL</span>
+                <span class="skill">React</span>
+                <span class="skill">Next.js</span>
+                <span class="skill">Node.js</span>
+                <span class="skill">REST APIs</span>
+                <span class="skill">MongoDB</span>
+                <span class="skill">MySQL</span>
+                <span class="skill">Git</span>
+            </div>
+        </section>
+
+        <section class="contact">
+            <h2>Contact</h2>
+            <p class="contact-links">
+                <a href="Resume-Tiger-Liu.pdf" target="_blank">Resume</a> ·
+                <a href="mailto:tigerliu3@163.com">tigerliu3@163.com</a> ·
+                <a href="tel:206-423-1910">206-423-1910</a> ·
+                <a href="https://linkedin.com/in/tiger-liu-b03478254" target="_blank" rel="noopener">LinkedIn</a>
+            </p>
+        </section>
+
+        <footer>© 2025 Tiger Liu · Philadelphia</footer>
+    </div>
+</body>
+</html>
