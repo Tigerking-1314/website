@@ -1,321 +1,1085 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tiger Liu</title>
+    <title>慢病用药小管家</title>
+    <meta name="description" content="慢病用药小管家：用药计划、提醒、库存与复诊/续方管理。">
+    <meta name="theme-color" content="#0f766e">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="manifest" href="./manifest.json">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         :root {
             --accent: #0f766e;
             --accent-hover: #0d9488;
-            --accent-soft: rgba(15, 118, 110, 0.1);
+            --accent-soft: rgba(15, 118, 110, 0.10);
             --text: #0f172a;
             --text-muted: #64748b;
             --bg: #f8fafc;
             --card: #ffffff;
             --border: #e2e8f0;
+            --danger: #b91c1c;
+            --warn: #b45309;
+            --ok: #15803d;
+            --shadow: 0 1px 3px rgba(0,0,0,0.06);
         }
 
         body {
-            font-family: 'DM Sans', -apple-system, sans-serif;
+            font-family: "Noto Sans SC", "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
             font-size: 16px;
             line-height: 1.65;
             color: var(--text);
-            background: var(--bg);
+            background: radial-gradient(1200px 600px at 20% 0%, rgba(15,118,110,0.10), transparent 55%),
+                        radial-gradient(900px 500px at 90% 10%, rgba(13,148,136,0.09), transparent 55%),
+                        var(--bg);
             min-height: 100vh;
         }
 
         .container {
-            max-width: 680px;
+            max-width: 1120px;
             margin: 0 auto;
-            padding: 100px 28px 120px;
+            padding: 44px 18px 72px;
         }
 
         .hero {
-            text-align: center;
-            padding-bottom: 64px;
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 14px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
         }
 
+        .hero-left { min-width: 260px; }
+
         .hero-badge {
-            display: inline-block;
-            font-size: 0.8rem;
-            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.78rem;
+            font-weight: 700;
             color: var(--accent);
-            letter-spacing: 0.08em;
+            letter-spacing: 0.12em;
             text-transform: uppercase;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
+        }
+
+        .hero-badge .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 999px;
+            background: var(--accent);
+            box-shadow: 0 0 0 6px rgba(15,118,110,0.12);
         }
 
         h1 {
-            font-size: clamp(2.25rem, 5vw, 3rem);
-            font-weight: 700;
+            font-size: clamp(1.65rem, 3.2vw, 2.35rem);
+            font-weight: 800;
             letter-spacing: -0.03em;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
             color: var(--text);
         }
 
         .subtitle {
             color: var(--text-muted);
-            font-size: 1.05rem;
-            margin-bottom: 36px;
-            font-weight: 500;
-        }
-
-        .links {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 12px;
-        }
-
-        .links a {
-            color: var(--text);
-            text-decoration: none;
-            padding: 12px 24px;
-            border-radius: 10px;
-            font-weight: 500;
-            font-size: 0.95rem;
-            transition: all 0.25s ease;
-        }
-
-        .links a:first-child {
-            background: var(--accent);
-            color: #fff;
-            box-shadow: 0 4px 14px rgba(15, 118, 110, 0.35);
-        }
-
-        .links a:first-child:hover {
-            background: var(--accent-hover);
-            transform: translateY(-1px);
-            box-shadow: 0 6px 20px rgba(15, 118, 110, 0.4);
-        }
-
-        .links a:not(:first-child) {
-            background: var(--card);
-            border: 1.5px solid var(--border);
-        }
-
-        .links a:not(:first-child):hover {
-            border-color: var(--accent);
-            color: var(--accent);
-            background: var(--accent-soft);
-        }
-
-        section {
-            padding: 32px 32px;
-            background: var(--card);
-            border-radius: 16px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            margin-bottom: 20px;
-            border: 1px solid rgba(0,0,0,0.04);
-        }
-
-        h2 {
-            font-size: 0.8rem;
+            font-size: 1.02rem;
+            margin-bottom: 6px;
             font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: var(--accent);
-            margin-bottom: 24px;
-            padding-bottom: 14px;
-            border-bottom: 1px solid var(--border);
         }
 
-        p {
-            color: var(--text-muted);
-            font-size: 0.98rem;
-        }
-
-        .item {
-            margin-bottom: 28px;
-        }
-
-        .item:last-child {
-            margin-bottom: 0;
-        }
-
-        .item-title {
-            font-weight: 600;
-            font-size: 1.05rem;
-            color: var(--text);
-            margin-bottom: 4px;
-        }
-
-        .item-meta {
-            font-size: 0.9rem;
-            color: var(--text-muted);
-        }
-
-        .skills {
+        .top-actions {
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
+            align-items: center;
+            justify-content: flex-end;
         }
 
-        .skill {
+        .btn {
+            appearance: none;
+            border: 1.5px solid var(--border);
+            background: rgba(255,255,255,0.78);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            color: var(--text);
+            padding: 10px 14px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 0.92rem;
+            cursor: pointer;
+            transition: transform 0.15s ease, border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+            user-select: none;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+        }
+
+        .btn:hover {
+            border-color: rgba(15,118,110,0.35);
+            background: rgba(15,118,110,0.08);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow);
+        }
+
+        .btn:active { transform: translateY(0px); }
+
+        .btn.primary {
+            background: var(--accent);
+            color: #fff;
+            border-color: transparent;
+            box-shadow: 0 6px 20px rgba(15,118,110,0.22);
+        }
+
+        .btn.primary:hover { background: var(--accent-hover); }
+
+        .btn.danger {
+            border-color: rgba(185,28,28,0.25);
+            color: var(--danger);
+        }
+
+        .btn.danger:hover {
+            background: rgba(185,28,28,0.08);
+            border-color: rgba(185,28,28,0.35);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1.06fr 0.94fr;
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        @media (max-width: 980px) {
+            .grid { grid-template-columns: 1fr; }
+            .top-actions { justify-content: flex-start; }
+        }
+
+        section {
+            padding: 16px 16px;
+            background: rgba(255,255,255,0.78);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 18px;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        h2 {
+            font-size: 0.78rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--accent);
+            margin-bottom: 12px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        label {
+            display: block;
             font-size: 0.88rem;
             color: var(--text-muted);
-            padding: 8px 16px;
-            background: var(--accent-soft);
-            border-radius: 8px;
-            font-weight: 500;
-            border: 1px solid rgba(15, 118, 110, 0.15);
+            margin-bottom: 6px;
+            font-weight: 700;
         }
 
-        .project-link {
-            color: inherit;
-            text-decoration: none;
-            display: block;
-            margin-bottom: 16px;
-            padding: 20px;
-            border-radius: 12px;
-            border: 1px solid var(--border);
-            transition: all 0.25s ease;
-        }
-
-        .project-link:last-of-type {
-            margin-bottom: 0;
-        }
-
-        .project-link:hover {
-            background: var(--accent-soft);
-            border-color: rgba(15, 118, 110, 0.25);
-            transform: translateX(4px);
-        }
-
-        .project-link:hover .item-title {
-            color: var(--accent);
-        }
-
-        .contact {
-            text-align: center;
-        }
-
-        .contact a {
+        input, select, textarea {
+            width: 100%;
+            border: 1.5px solid var(--border);
+            border-radius: 14px;
+            padding: 10px 12px;
+            background: rgba(255,255,255,0.92);
             color: var(--text);
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.2s;
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.15s ease, box-shadow 0.15s ease;
         }
 
-        .contact a:hover {
-            color: var(--accent);
+        textarea { min-height: 92px; resize: vertical; }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: rgba(15,118,110,0.55);
+            box-shadow: 0 0 0 4px rgba(15,118,110,0.12);
         }
 
-        .contact-links {
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        @media (max-width: 640px) {
+            .row { grid-template-columns: 1fr; }
+        }
+
+        .muted { color: var(--text-muted); }
+        .small { font-size: 0.92rem; }
+
+        .pill {
+            display: inline-flex;
+            gap: 8px;
+            align-items: center;
+            padding: 6px 10px;
+            border-radius: 999px;
+            border: 1px solid var(--border);
+            background: rgba(255,255,255,0.92);
+            font-size: 0.86rem;
             color: var(--text-muted);
+            font-weight: 700;
+            white-space: nowrap;
         }
 
-        .contact-links a {
-            color: var(--accent);
+        .pill.ok { border-color: rgba(21,128,61,0.25); color: var(--ok); background: rgba(21,128,61,0.06); }
+        .pill.warn { border-color: rgba(180,83,9,0.25); color: var(--warn); background: rgba(180,83,9,0.06); }
+        .pill.danger { border-color: rgba(185,28,28,0.25); color: var(--danger); background: rgba(185,28,28,0.06); }
+
+        .card-list { display: grid; gap: 10px; }
+
+        .card {
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 12px 12px;
+            background: rgba(255,255,255,0.9);
         }
 
-        footer {
-            text-align: center;
-            margin-top: 48px;
+        .card-head {
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+            justify-content: space-between;
+        }
+
+        .card-title {
+            font-weight: 900;
+            letter-spacing: -0.01em;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .card-meta {
+            margin-top: 6px;
+            display: grid;
+            gap: 4px;
+            color: var(--text-muted);
+            font-size: 0.92rem;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        .dose-list { display: grid; gap: 10px; }
+
+        .dose {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            justify-content: space-between;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 10px 12px;
+            background: rgba(255,255,255,0.9);
+        }
+
+        .dose-left { min-width: 0; }
+
+        .dose-title {
+            font-weight: 900;
+            letter-spacing: -0.01em;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .dose-sub {
+            color: var(--text-muted);
             font-size: 0.9rem;
-            color: var(--text-muted);
+            margin-top: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 740px;
+        }
+
+        .divider {
+            height: 1px;
+            background: var(--border);
+            margin: 14px 0;
+        }
+
+        .notice {
+            border: 1px solid rgba(15,118,110,0.22);
+            background: rgba(15,118,110,0.06);
+            border-radius: 18px;
+            padding: 12px 12px;
+            color: var(--text);
+            margin-top: 10px;
+        }
+
+        .notice strong { color: var(--accent); }
+
+        footer { margin-top: 14px; color: var(--text-muted); font-size: 0.9rem; }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <header class="hero">
-            <div class="hero-badge">MCIT @ UPenn</div>
-            <h1>Tiger Liu</h1>
-            <p class="subtitle">Software Developer</p>
-            <div class="links">
-                <a href="Resume-Tiger-Liu.pdf" target="_blank">Resume</a>
-                <a href="mailto:tigerliu3@163.com">Email</a>
-                <a href="tel:206-423-1910">Phone</a>
-                <a href="https://linkedin.com/in/tiger-liu-b03478254" target="_blank" rel="noopener">LinkedIn</a>
+            <div class="hero-left">
+                <div class="hero-badge"><span class="dot"></span>chronic care · ai prototype</div>
+                <h1>慢病用药小管家</h1>
+                <p class="subtitle">把「问诊－购药－用药－续方」串起来：计划、提醒、库存、复诊</p>
+            </div>
+            <div class="top-actions">
+                <button class="btn primary" id="btnEnableNoti" type="button">开启提醒</button>
+                <button class="btn" id="btnExport" type="button">导出数据</button>
+                <label class="btn" for="importFile" style="cursor:pointer;">
+                    导入数据
+                    <input id="importFile" class="sr-only" type="file" accept="application/json">
+                </label>
+                <button class="btn" id="btnSample" type="button">填充示例</button>
+                <button class="btn danger" id="btnReset" type="button">清空</button>
             </div>
         </header>
 
-        <section>
-            <h2>About</h2>
-            <p>MCIT @ UPenn · Former UW · Business Analyst at NcCountry & Beats by Dre · Full-stack developer</p>
-        </section>
+        <div class="notice">
+            <strong>演示说明</strong>：数据默认保存在你的浏览器（本地存储）。提醒支持浏览器通知；若未开启通知，也会在页面内高亮提示“该吃药/该复诊/该续方”。（原型版：不涉及医疗建议，仅做计划与提醒）
+        </div>
 
-        <section>
-            <h2>Education</h2>
-            <div class="item">
-                <div class="item-title">University of Pennsylvania</div>
-                <div class="item-meta">MCIT · 2025 – 2027 · GPA 3.5</div>
-            </div>
-            <div class="item">
-                <div class="item-title">University of Washington</div>
-                <div class="item-meta">BA Communication, Business Minor · 2022 – 2025 · GPA 3.8</div>
-            </div>
-        </section>
+        <div class="grid">
+            <section>
+                <h2>我的计划（问诊 → 用药）</h2>
+                <form id="medForm">
+                    <div class="row">
+                        <div>
+                            <label for="medName">药品名称</label>
+                            <input id="medName" required placeholder="例如：二甲双胍缓释片">
+                        </div>
+                        <div>
+                            <label for="medIndication">适应症/慢病</label>
+                            <input id="medIndication" placeholder="例如：2型糖尿病">
+                        </div>
+                    </div>
 
-        <section>
-            <h2>Experience</h2>
-            <div class="item">
-                <div class="item-title">NcCountry</div>
-                <div class="item-meta">Business Analyst Intern · 2024 · Java, SQL, data pipeline</div>
-            </div>
-            <div class="item">
-                <div class="item-title">Beats by Dre</div>
-                <div class="item-meta">Business Analyst Intern · 2024 · REST APIs</div>
-            </div>
-            <div class="item">
-                <div class="item-title">SkyFood · Appointment System</div>
-                <div class="item-meta">Full-stack · 2025 · Java, Node.js, React</div>
-            </div>
-        </section>
+                    <div class="row" style="margin-top:12px;">
+                        <div>
+                            <label for="doseText">每次用量（展示用）</label>
+                            <input id="doseText" placeholder="例如：0.5g*1片（饭后）">
+                        </div>
+                        <div>
+                            <label for="unitsPerDose">每次消耗（用于库存计算）</label>
+                            <input id="unitsPerDose" type="number" min="0" step="0.5" value="1">
+                        </div>
+                    </div>
 
-        <section>
-            <h2>Projects</h2>
-            <a href="../Hack/Gravity/best%20game.html" class="project-link" target="_blank">
-                <div class="item-title">Gravity Party</div>
-                <div class="item-meta">Canvas physics game</div>
-            </a>
-            <a href="../Hack/Space Gravity/game-level.html" class="project-link" target="_blank">
-                <div class="item-title">Gravity Party Level Mode</div>
-                <div class="item-meta">Level-based platformer</div>
-            </a>
-            <div class="item" style="margin-top: 16px;">
-                <div class="item-title">Road Trip · Snowdrive</div>
-                <div class="item-meta">Driving simulation games</div>
-            </div>
-        </section>
+                    <div class="row" style="margin-top:12px;">
+                        <div>
+                            <label for="times">服药时间（HH:MM，用逗号分隔）</label>
+                            <input id="times" placeholder="例如：08:00, 20:00" required>
+                        </div>
+                        <div>
+                            <label for="startDate">开始日期</label>
+                            <input id="startDate" type="date" required>
+                        </div>
+                    </div>
 
-        <section>
-            <h2>Skills</h2>
-            <div class="skills">
-                <span class="skill">Java</span>
-                <span class="skill">Python</span>
-                <span class="skill">TypeScript</span>
-                <span class="skill">JavaScript</span>
-                <span class="skill">C / C++</span>
-                <span class="skill">SQL</span>
-                <span class="skill">React</span>
-                <span class="skill">Next.js</span>
-                <span class="skill">Node.js</span>
-                <span class="skill">REST APIs</span>
-                <span class="skill">MongoDB</span>
-                <span class="skill">MySQL</span>
-                <span class="skill">Git</span>
-            </div>
-        </section>
+                    <div class="row" style="margin-top:12px;">
+                        <div>
+                            <label for="durationDays">疗程天数（可选）</label>
+                            <input id="durationDays" type="number" min="1" step="1" placeholder="例如：30">
+                        </div>
+                        <div>
+                            <label for="inventory">当前库存（单位数）</label>
+                            <input id="inventory" type="number" min="0" step="1" placeholder="例如：60">
+                        </div>
+                    </div>
 
-        <section class="contact">
-            <h2>Contact</h2>
-            <p class="contact-links">
-                <a href="Resume-Tiger-Liu.pdf" target="_blank">Resume</a> ·
-                <a href="mailto:tigerliu3@163.com">tigerliu3@163.com</a> ·
-                <a href="tel:206-423-1910">206-423-1910</a> ·
-                <a href="https://linkedin.com/in/tiger-liu-b03478254" target="_blank" rel="noopener">LinkedIn</a>
-            </p>
-        </section>
+                    <div style="margin-top:12px;">
+                        <label for="notes">医嘱/备注</label>
+                        <textarea id="notes" placeholder="例如：饭后服用；如果漏服不要加倍…"></textarea>
+                    </div>
 
-        <footer>© 2025 Tiger Liu · Philadelphia</footer>
+                    <div class="row" style="margin-top:12px;">
+                        <div>
+                            <label for="nextRefillDate">建议续方/购药日期（可选）</label>
+                            <input id="nextRefillDate" type="date">
+                        </div>
+                        <div>
+                            <label for="nextVisitDate">下次复诊日期（可选）</label>
+                            <input id="nextVisitDate" type="date">
+                        </div>
+                    </div>
+
+                    <div style="margin-top:14px; display:flex; gap:10px; flex-wrap:wrap;">
+                        <button class="btn primary" type="submit">添加到用药计划</button>
+                        <button class="btn" id="btnQuickToday" type="button">自动填今天</button>
+                    </div>
+                    <p class="muted small" style="margin-top:10px;">
+                        提示：库存用于“是否需要重复购买/何时该补货”的判断；疗程天数用于自动计算结束日期。
+                    </p>
+                </form>
+
+                <div class="divider"></div>
+                <h2>我的用药列表（购药 → 用药 → 续方）</h2>
+                <div id="medList" class="card-list"></div>
+            </section>
+
+            <section>
+                <h2>今日用药 & 提醒</h2>
+                <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:12px;">
+                    <span class="pill" id="pillNoti">通知：未开启</span>
+                    <span class="pill" id="pillDue">今日：计算中…</span>
+                    <span class="pill" id="pillRefill">续方：—</span>
+                </div>
+                <div id="todayDoses" class="dose-list"></div>
+
+                <div class="divider"></div>
+                <h2>复诊/续方提醒（可一键加日历）</h2>
+                <div id="reminderList" class="card-list"></div>
+
+                <div class="divider"></div>
+                <h2>产品结构（测评展示）</h2>
+                <p class="muted small">
+                    这版重点演示“连贯服务闭环”：<br>
+                    问诊（医嘱）→ 建计划（时间/剂量）→ 用药打卡（依从性）→ 库存推算（避免重复购买）→ 续方/复诊提醒（闭环）。
+                </p>
+                <footer class="muted small" style="margin-top:12px;">
+                    本页面为原型 Demo，可直接部署为链接提交。
+                </footer>
+            </section>
+        </div>
     </div>
+
+    <script>
+        const STORAGE_KEY = "medBuddy.v1";
+        const state = {
+            notiEnabled: false,
+            timeouts: [],
+            data: { version: 1, meds: [], doseLog: [] }
+        };
+
+        const $ = (id) => document.getElementById(id);
+
+        function nowLocal() { return new Date(); }
+        function toISODate(d) { return d.toISOString().slice(0, 10); }
+        function parseISODate(s) { return s ? new Date(s + "T00:00:00") : null; }
+        function clamp(n, min, max) { return Math.max(min, Math.min(max, n)); }
+        function uid() { return Math.random().toString(16).slice(2) + "-" + Date.now().toString(16); }
+
+        function safeJsonParse(str) {
+            try { return JSON.parse(str); } catch { return null; }
+        }
+
+        function load() {
+            const raw = localStorage.getItem(STORAGE_KEY);
+            const parsed = raw ? safeJsonParse(raw) : null;
+            if (parsed && Array.isArray(parsed.meds) && Array.isArray(parsed.doseLog)) state.data = parsed;
+        }
+
+        function save() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(state.data));
+        }
+
+        function escapeHtml(s) {
+            return String(s ?? "")
+                .replaceAll("&", "&amp;")
+                .replaceAll("<", "&lt;")
+                .replaceAll(">", "&gt;")
+                .replaceAll('"', "&quot;")
+                .replaceAll("'", "&#39;");
+        }
+
+        function normalizeTimes(timesStr) {
+            return timesStr
+                .split(",")
+                .map(s => s.trim())
+                .filter(Boolean)
+                .map(t => {
+                    const m = t.match(/^(\d{1,2}):(\d{2})$/);
+                    if (!m) return null;
+                    const hh = clamp(parseInt(m[1], 10), 0, 23);
+                    const mm = clamp(parseInt(m[2], 10), 0, 59);
+                    return String(hh).padStart(2, "0") + ":" + String(mm).padStart(2, "0");
+                })
+                .filter(Boolean)
+                .filter((v, i, a) => a.indexOf(v) === i)
+                .sort();
+        }
+
+        function endDateFrom(startISO, durationDays) {
+            if (!startISO || !durationDays) return null;
+            const d = new Date(startISO + "T00:00:00");
+            d.setDate(d.getDate() + Number(durationDays) - 1);
+            return toISODate(d);
+        }
+
+        function medActiveOn(med, isoDate) {
+            const s = med.startDate;
+            const e = med.endDate || null;
+            if (!s) return false;
+            if (isoDate < s) return false;
+            if (e && isoDate > e) return false;
+            return true;
+        }
+
+        function dosesForDate(isoDate) {
+            const out = [];
+            for (const med of state.data.meds) {
+                if (!medActiveOn(med, isoDate)) continue;
+                for (const t of (med.times || [])) {
+                    out.push({
+                        id: med.id + "|" + isoDate + "|" + t,
+                        medId: med.id,
+                        name: med.name,
+                        indication: med.indication,
+                        doseText: med.doseText,
+                        time: t,
+                        isoDate
+                    });
+                }
+            }
+            out.sort((a, b) => (a.time.localeCompare(b.time) || a.name.localeCompare(b.name)));
+            return out;
+        }
+
+        function isDoseTaken(doseId) {
+            return state.data.doseLog.some(x => x.doseId === doseId);
+        }
+
+        function takeDose(dose) {
+            if (isDoseTaken(dose.id)) return;
+            const med = state.data.meds.find(m => m.id === dose.medId);
+            if (!med) return;
+
+            if (typeof med.inventory === "number" && typeof med.unitsPerDose === "number") {
+                med.inventory = Math.max(0, med.inventory - med.unitsPerDose);
+            }
+
+            state.data.doseLog.push({ id: uid(), doseId: dose.id, medId: dose.medId, takenAt: new Date().toISOString() });
+            save();
+            renderAll();
+        }
+
+        function untakeDose(dose) {
+            const idx = state.data.doseLog.findIndex(x => x.doseId === dose.id);
+            if (idx === -1) return;
+            const med = state.data.meds.find(m => m.id === dose.medId);
+            if (med && typeof med.inventory === "number" && typeof med.unitsPerDose === "number") {
+                med.inventory = med.inventory + med.unitsPerDose;
+            }
+            state.data.doseLog.splice(idx, 1);
+            save();
+            renderAll();
+        }
+
+        function formatDateCN(iso) {
+            if (!iso) return "—";
+            const d = parseISODate(iso);
+            return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+        }
+
+        function computeRunOutDays(med) {
+            if (typeof med.inventory !== "number") return null;
+            const perDay = (med.times?.length || 0) * (Number(med.unitsPerDose) || 0);
+            if (!perDay) return null;
+            return med.inventory / perDay;
+        }
+
+        function refillStatus(med) {
+            const daysLeft = computeRunOutDays(med);
+            if (daysLeft == null) return { level: "warn", text: "未录库存，无法判断是否重复购药" };
+            if (daysLeft <= 3) return { level: "danger", text: `库存约剩 ${daysLeft.toFixed(1)} 天，建议尽快续方/购药` };
+            if (daysLeft <= 7) return { level: "warn", text: `库存约剩 ${daysLeft.toFixed(1)} 天，可开始准备续方/购药` };
+            return { level: "ok", text: `库存约剩 ${daysLeft.toFixed(1)} 天（避免重复购买）` };
+        }
+
+        function nextDoseTime() {
+            const now = nowLocal();
+            const today = toISODate(now);
+            const doses = dosesForDate(today);
+            const upcoming = [];
+            for (const d of doses) {
+                const dt = new Date(`${d.isoDate}T${d.time}:00`);
+                if (dt.getTime() >= now.getTime() - 30 * 60 * 1000 && !isDoseTaken(d.id)) upcoming.push({ dose: d, at: dt });
+            }
+            upcoming.sort((a, b) => a.at - b.at);
+            return upcoming[0] || null;
+        }
+
+        function clearScheduled() {
+            for (const t of state.timeouts) clearTimeout(t);
+            state.timeouts = [];
+        }
+
+        function scheduleNotifications() {
+            clearScheduled();
+            if (!state.notiEnabled) return;
+            if (!("Notification" in window)) return;
+            if (Notification.permission !== "granted") return;
+
+            const now = nowLocal();
+            const today = toISODate(now);
+            const doses = dosesForDate(today);
+            for (const d of doses) {
+                if (isDoseTaken(d.id)) continue;
+                const dt = new Date(`${d.isoDate}T${d.time}:00`);
+                const delay = dt.getTime() - now.getTime();
+                if (delay < 0 || delay > 24 * 60 * 60 * 1000) continue;
+                const timeout = setTimeout(() => {
+                    try {
+                        new Notification("该吃药啦", { body: `${d.time} · ${d.name}${d.doseText ? " · " + d.doseText : ""}`, tag: d.id });
+                    } catch {}
+                }, delay);
+                state.timeouts.push(timeout);
+            }
+        }
+
+        function setPills() {
+            const perm = ("Notification" in window) ? Notification.permission : "unsupported";
+            const pillNoti = $("pillNoti");
+            if (perm === "granted") {
+                pillNoti.textContent = state.notiEnabled ? "通知：已开启（本页运行中生效）" : "通知：已授权（点击开启提醒）";
+                pillNoti.className = "pill ok";
+            } else if (perm === "denied") {
+                pillNoti.textContent = "通知：被浏览器拦截（需在浏览器设置里允许）";
+                pillNoti.className = "pill danger";
+            } else if (perm === "unsupported") {
+                pillNoti.textContent = "通知：当前浏览器不支持";
+                pillNoti.className = "pill warn";
+            } else {
+                pillNoti.textContent = "通知：未开启";
+                pillNoti.className = "pill warn";
+            }
+
+            const n = nextDoseTime();
+            const pillDue = $("pillDue");
+            if (!n) {
+                pillDue.textContent = "今日：暂无待服用药";
+                pillDue.className = "pill ok";
+            } else {
+                const mins = Math.round((n.at.getTime() - nowLocal().getTime()) / 60000);
+                if (mins <= 0) {
+                    pillDue.textContent = `今日：${n.dose.time} 已到点（待服）`;
+                    pillDue.className = "pill danger";
+                } else if (mins <= 30) {
+                    pillDue.textContent = `今日：${n.dose.time} 即将服药（${mins} 分钟后）`;
+                    pillDue.className = "pill warn";
+                } else {
+                    pillDue.textContent = `今日：下次 ${n.dose.time} 服药`;
+                    pillDue.className = "pill ok";
+                }
+            }
+
+            const medWithInventory = state.data.meds.filter(m => typeof m.inventory === "number");
+            const weight = (lvl) => lvl === "danger" ? 0 : lvl === "warn" ? 1 : 2;
+            const worst = medWithInventory
+                .map(m => ({ m, s: refillStatus(m) }))
+                .sort((a, b) => weight(a.s.level) - weight(b.s.level))[0];
+
+            const pillRefill = $("pillRefill");
+            if (!worst) {
+                pillRefill.textContent = "续方：未录库存";
+                pillRefill.className = "pill warn";
+            } else {
+                pillRefill.textContent = "续方：" + worst.m.name + "（" + worst.s.text.replace(/^库存约剩\s*/, "").replace("（避免重复购买）", "") + "）";
+                pillRefill.className = "pill " + worst.s.level;
+            }
+        }
+
+        function renderMeds() {
+            const box = $("medList");
+            if (!state.data.meds.length) {
+                box.innerHTML = `<p class="muted small">还没有用药计划。你可以先点“填充示例”，或在上方录入药品与服药时间。</p>`;
+                return;
+            }
+
+            const html = state.data.meds
+                .slice()
+                .sort((a, b) => (a.name || "").localeCompare(b.name || ""))
+                .map(m => {
+                    const s = refillStatus(m);
+                    const endText = m.endDate ? `至 ${formatDateCN(m.endDate)}` : (m.durationDays ? `约 ${m.durationDays} 天疗程` : "长期用药");
+                    const refillDate = m.nextRefillDate ? formatDateCN(m.nextRefillDate) : "—";
+                    const visitDate = m.nextVisitDate ? formatDateCN(m.nextVisitDate) : "—";
+                    const inv = (typeof m.inventory === "number") ? `${m.inventory}` : "未填写";
+                    const times = (m.times || []).join("、") || "—";
+                    return `
+                        <div class="card">
+                            <div class="card-head">
+                                <div style="min-width:0;">
+                                    <div class="card-title">
+                                        <span>${escapeHtml(m.name)}</span>
+                                        <span class="pill ${s.level}">${escapeHtml(s.level === "ok" ? "库存充足" : s.level === "warn" ? "快用完" : "可能断药")}</span>
+                                    </div>
+                                    <div class="card-meta">
+                                        <div>慢病：${escapeHtml(m.indication || "—")}｜时间：${escapeHtml(times)}｜剂量：${escapeHtml(m.doseText || "—")}</div>
+                                        <div>开始：${formatDateCN(m.startDate)}｜${escapeHtml(endText)}｜库存：${escapeHtml(inv)}（单位）</div>
+                                        <div>续方建议：${escapeHtml(refillDate)}｜复诊：${escapeHtml(visitDate)}</div>
+                                        <div class="muted small">${escapeHtml(s.text)}</div>
+                                    </div>
+                                </div>
+                                <div class="card-actions">
+                                    <button class="btn" type="button" onclick="addICS('${m.id}','refill')">加续方到日历</button>
+                                    <button class="btn" type="button" onclick="addICS('${m.id}','visit')">加复诊到日历</button>
+                                    <button class="btn danger" type="button" onclick="removeMed('${m.id}')">删除</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join("");
+            box.innerHTML = html;
+        }
+
+        function renderToday() {
+            const now = nowLocal();
+            const today = toISODate(now);
+            const doses = dosesForDate(today);
+            const box = $("todayDoses");
+
+            if (!doses.length) {
+                box.innerHTML = `<p class="muted small">今天没有计划服药。</p>`;
+                return;
+            }
+
+            const html = doses.map(d => {
+                const taken = isDoseTaken(d.id);
+                const dt = new Date(`${d.isoDate}T${d.time}:00`);
+                const mins = Math.round((dt.getTime() - now.getTime()) / 60000);
+                let statusPill = `<span class="pill ok">未到点</span>`;
+                if (taken) statusPill = `<span class="pill ok">已服</span>`;
+                else if (mins <= 0) statusPill = `<span class="pill danger">已到点</span>`;
+                else if (mins <= 30) statusPill = `<span class="pill warn">即将</span>`;
+
+                const sub = `${d.time} · ${d.indication || "—"}${d.doseText ? " · " + d.doseText : ""}`;
+                return `
+                    <div class="dose">
+                        <div class="dose-left">
+                            <div class="dose-title">${escapeHtml(d.name)} ${statusPill}</div>
+                            <div class="dose-sub">${escapeHtml(sub)}</div>
+                        </div>
+                        <div class="card-actions">
+                            ${taken
+                                ? `<button class="btn" type="button" onclick='untakeDose(${JSON.stringify(d)})'>撤销</button>`
+                                : `<button class="btn primary" type="button" onclick='takeDose(${JSON.stringify(d)})'>我已服用</button>`
+                            }
+                        </div>
+                    </div>
+                `;
+            }).join("");
+
+            box.innerHTML = html;
+        }
+
+        function renderReminders() {
+            const box = $("reminderList");
+            const items = [];
+            for (const m of state.data.meds) {
+                if (m.nextRefillDate) {
+                    items.push({ id: m.id, type: "refill", title: `${m.name} · 续方/购药`, date: m.nextRefillDate, hint: "用于避免断药/重复购买：结合库存与建议日期做准备" });
+                }
+                if (m.nextVisitDate) {
+                    items.push({ id: m.id, type: "visit", title: `${m.name} · 复诊`, date: m.nextVisitDate, hint: "复诊后可调整医嘱并更新用药计划" });
+                }
+            }
+
+            if (!items.length) {
+                box.innerHTML = `<p class="muted small">暂无复诊/续方提醒。你可以在添加药品时填写日期。</p>`;
+                return;
+            }
+
+            items.sort((a, b) => (a.date || "").localeCompare(b.date || ""));
+            box.innerHTML = items.map(x => {
+                const d = parseISODate(x.date);
+                const diffDays = Math.round((d.getTime() - parseISODate(toISODate(nowLocal())).getTime()) / (24 * 60 * 60 * 1000));
+                const level = diffDays < 0 ? "danger" : diffDays <= 3 ? "warn" : "ok";
+                const label = diffDays < 0 ? "已过期" : diffDays === 0 ? "今天" : `${diffDays} 天后`;
+                return `
+                    <div class="card">
+                        <div class="card-head">
+                            <div style="min-width:0;">
+                                <div class="card-title">
+                                    <span>${escapeHtml(x.title)}</span>
+                                    <span class="pill ${level}">${escapeHtml(label)}</span>
+                                </div>
+                                <div class="card-meta">
+                                    <div>日期：${formatDateCN(x.date)}</div>
+                                    <div class="muted small">${escapeHtml(x.hint)}</div>
+                                </div>
+                            </div>
+                            <div class="card-actions">
+                                <button class="btn" type="button" onclick="addICS('${x.id}','${x.type}')">加到日历</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join("");
+        }
+
+        function addMedFromForm() {
+            const name = $("medName").value.trim();
+            const indication = $("medIndication").value.trim();
+            const doseText = $("doseText").value.trim();
+            const unitsPerDose = Number($("unitsPerDose").value || 0);
+            const times = normalizeTimes($("times").value);
+            const startDate = $("startDate").value;
+            const durationDays = $("durationDays").value ? Number($("durationDays").value) : null;
+            const endDate = endDateFrom(startDate, durationDays);
+            const inventory = $("inventory").value === "" ? null : Number($("inventory").value);
+            const notes = $("notes").value.trim();
+            const nextRefillDate = $("nextRefillDate").value || null;
+            const nextVisitDate = $("nextVisitDate").value || null;
+
+            if (!name) return alert("请填写药品名称。");
+            if (!startDate) return alert("请填写开始日期。");
+            if (!times.length) return alert("请填写至少一个服药时间（如 08:00）。");
+            if (!(unitsPerDose >= 0)) return alert("每次消耗需为数字。");
+
+            state.data.meds.push({
+                id: uid(),
+                name,
+                indication,
+                doseText,
+                unitsPerDose,
+                times,
+                startDate,
+                durationDays,
+                endDate,
+                inventory: inventory == null || Number.isNaN(inventory) ? null : inventory,
+                notes,
+                nextRefillDate,
+                nextVisitDate
+            });
+            save();
+            $("medForm").reset();
+            $("unitsPerDose").value = "1";
+            $("startDate").value = toISODate(nowLocal());
+            renderAll();
+        }
+
+        function removeMed(id) {
+            const idx = state.data.meds.findIndex(m => m.id === id);
+            if (idx === -1) return;
+            if (!confirm("确定删除该药品计划吗？")) return;
+            state.data.meds.splice(idx, 1);
+            save();
+            renderAll();
+        }
+
+        function exportData() {
+            const blob = new Blob([JSON.stringify(state.data, null, 2)], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `med-buddy-export-${toISODate(nowLocal())}.json`;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            URL.revokeObjectURL(url);
+        }
+
+        async function importData(file) {
+            const text = await file.text();
+            const parsed = safeJsonParse(text);
+            if (!parsed || !Array.isArray(parsed.meds) || !Array.isArray(parsed.doseLog)) {
+                alert("导入失败：文件格式不正确。");
+                return;
+            }
+            state.data = parsed;
+            save();
+            renderAll();
+        }
+
+        function fillSample() {
+            const today = toISODate(nowLocal());
+            state.data = {
+                version: 1,
+                meds: [
+                    {
+                        id: uid(),
+                        name: "二甲双胍缓释片",
+                        indication: "2型糖尿病",
+                        doseText: "0.5g*1片（饭后）",
+                        unitsPerDose: 1,
+                        times: ["08:00", "20:00"],
+                        startDate: today,
+                        durationDays: 30,
+                        endDate: endDateFrom(today, 30),
+                        inventory: 48,
+                        notes: "饭后服用；若漏服不要加倍。",
+                        nextRefillDate: (() => { const d = parseISODate(today); d.setDate(d.getDate() + 20); return toISODate(d); })(),
+                        nextVisitDate: (() => { const d = parseISODate(today); d.setDate(d.getDate() + 28); return toISODate(d); })()
+                    },
+                    {
+                        id: uid(),
+                        name: "氨氯地平",
+                        indication: "高血压",
+                        doseText: "5mg*1片",
+                        unitsPerDose: 1,
+                        times: ["09:00"],
+                        startDate: today,
+                        durationDays: null,
+                        endDate: null,
+                        inventory: 10,
+                        notes: "固定时间服用，避免漏服。",
+                        nextRefillDate: (() => { const d = parseISODate(today); d.setDate(d.getDate() + 7); return toISODate(d); })(),
+                        nextVisitDate: null
+                    }
+                ],
+                doseLog: []
+            };
+            save();
+            renderAll();
+        }
+
+        function resetAll() {
+            if (!confirm("确定清空所有数据吗？")) return;
+            state.data = { version: 1, meds: [], doseLog: [] };
+            save();
+            renderAll();
+        }
+
+        function buildICS({ title, dateISO, description }) {
+            const d = parseISODate(dateISO);
+            if (!d) return null;
+            const y = d.getFullYear();
+            const m = String(d.getMonth() + 1).padStart(2, "0");
+            const da = String(d.getDate()).padStart(2, "0");
+            const stamp = new Date().toISOString().replaceAll(/[-:]/g, "").replaceAll(".", "").slice(0, 15) + "Z";
+            const dt = `${y}${m}${da}`;
+
+            const esc = (s) => String(s || "")
+                .replaceAll("\\", "\\\\")
+                .replaceAll("\n", "\\n")
+                .replaceAll(",", "\\,")
+                .replaceAll(";", "\\;");
+
+            return [
+                "BEGIN:VCALENDAR",
+                "VERSION:2.0",
+                "PRODID:-//MedBuddy//Prototype//CN",
+                "CALSCALE:GREGORIAN",
+                "BEGIN:VEVENT",
+                `UID:${uid()}@medbuddy`,
+                `DTSTAMP:${stamp}`,
+                `DTSTART;VALUE=DATE:${dt}`,
+                `SUMMARY:${esc(title)}`,
+                `DESCRIPTION:${esc(description)}`,
+                "END:VEVENT",
+                "END:VCALENDAR"
+            ].join("\r\n");
+        }
+
+        function addICS(medId, type) {
+            const med = state.data.meds.find(m => m.id === medId);
+            if (!med) return;
+            const dateISO = type === "visit" ? med.nextVisitDate : med.nextRefillDate;
+            if (!dateISO) return alert("该提醒未填写日期。");
+            const title = type === "visit" ? `复诊：${med.name}` : `续方/购药：${med.name}`;
+            const description = type === "visit"
+                ? `复诊提醒：${med.name}\n慢病：${med.indication || "—"}\n医嘱：${med.notes || "—"}`
+                : `续方/购药提醒：${med.name}\n慢病：${med.indication || "—"}\n库存：${typeof med.inventory === "number" ? med.inventory : "未填写"}（单位）`;
+
+            const ics = buildICS({ title, dateISO, description });
+            if (!ics) return;
+            const blob = new Blob([ics], { type: "text/calendar;charset=utf-8" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `${type}-${(med.name || "med").slice(0, 20)}-${dateISO}.ics`;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            URL.revokeObjectURL(url);
+        }
+
+        async function enableNotifications() {
+            if (!("Notification" in window)) {
+                alert("当前浏览器不支持通知提醒。");
+                return;
+            }
+            const perm = await Notification.requestPermission();
+            if (perm !== "granted") {
+                state.notiEnabled = false;
+                renderAll();
+                return;
+            }
+            state.notiEnabled = true;
+            scheduleNotifications();
+            renderAll();
+        }
+
+        function renderAll() {
+            renderMeds();
+            renderToday();
+            renderReminders();
+            setPills();
+            scheduleNotifications();
+        }
+
+        function bind() {
+            $("btnEnableNoti").addEventListener("click", enableNotifications);
+            $("btnExport").addEventListener("click", exportData);
+            $("btnSample").addEventListener("click", fillSample);
+            $("btnReset").addEventListener("click", resetAll);
+            $("btnQuickToday").addEventListener("click", () => {
+                $("startDate").value = toISODate(nowLocal());
+                $("durationDays").value = "30";
+            });
+            $("medForm").addEventListener("submit", (e) => {
+                e.preventDefault();
+                addMedFromForm();
+            });
+            $("importFile").addEventListener("change", async (e) => {
+                const file = e.target.files?.[0];
+                if (!file) return;
+                await importData(file);
+                e.target.value = "";
+            });
+            document.addEventListener("visibilitychange", () => {
+                if (!document.hidden) scheduleNotifications();
+            });
+
+            window.takeDose = takeDose;
+            window.untakeDose = untakeDose;
+            window.removeMed = removeMed;
+            window.addICS = addICS;
+        }
+
+        async function registerSW() {
+            if (!("serviceWorker" in navigator)) return;
+            try { await navigator.serviceWorker.register("./sw.js"); } catch {}
+        }
+
+        load();
+        bind();
+        $("startDate").value = toISODate(nowLocal());
+        registerSW();
+        renderAll();
+        setInterval(() => setPills(), 30 * 1000);
+    </script>
 </body>
 </html>

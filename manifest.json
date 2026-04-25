@@ -1,0 +1,19 @@
+{
+  "name": "慢病用药小管家",
+  "short_name": "用药小管家",
+  "description": "用药计划、提醒、库存与复诊/续方管理（原型）",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f8fafc",
+  "theme_color": "#0f766e",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
+
